@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>System JS Test</title>
+    <script src="system.js"></script>
+  </head>
+  <body>
+  		<p>Click <a class="run" href="javascript:">here</a> to simulate loading of slow-loading script dependencies with <a href="https://github.com/systemjs/systemjs">system.js</a></p>
+
+  		<ul class="content">
+  		</ul>
+
+	 	<script>
+	 		// Our sleep function to simulate slow-loading (synchronous) scripts
+			function sleep(milliseconds) {
+			    var start = new Date().getTime();
+			    for (var i = 0; i < 1e7; i++) {
+			        if ((new Date().getTime() - start) > milliseconds){
+			            break;
+			        }
+			    }
+			}
+
+			// Add a click handler
+			document.querySelector('.run').onclick = function(e) {
+				System.config({
+
+					// set all requires to "lib" for library code
+					baseURL: '/lib/',
+
+					// set "app" as an exception for our application code
+					paths: {
+					  'app/*': '/app/*.js'
+					}
+				});
+
+				System['import']('script1').then(function(m){
+
+					System['import']('script2').then(function(m){
+
+						System['import']('app/app').then(function(m){
+						});
+
+					});
+				});
+			}
+	  	</script>
+  </body>
+</html>
